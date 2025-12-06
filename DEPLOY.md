@@ -48,7 +48,7 @@
    heroku addons:create heroku-postgresql:essential-0
    ```
 
-8. **Set environment variables**:
+9. **Set environment variables**:
 
    **For Unix/Mac (bash):**
    ```bash
@@ -61,21 +61,21 @@
    ```powershell
    heroku config:set SECRET_KEY=$(python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
    heroku config:set DEBUG=False
-   heroku config:set ALLOWED_HOSTS=your-app-name.herokuapp.com
+   heroku config:set ALLOWED_HOSTS=*.herokuapp.com
    ```
-   (Replace `your-app-name` with your actual Heroku app name. You can find it by running `heroku apps:info` and looking for the "Web URL", or simply use `*.herokuapp.com` to allow all Heroku subdomains)
+   (Using `*.herokuapp.com` allows all Heroku subdomains, which is the simplest approach. Alternatively, you can set your exact domain by running `heroku apps:info` and copying the "Web URL")
 
-9. **Build and push Docker image**:
+10. **Build and push Docker image**:
    ```bash
    heroku container:push web
    ```
 
-10. **Release the container**:
+11. **Release the container**:
     ```bash
     heroku container:release web
     ```
 
-11. **Open your app**:
+12. **Open your app**:
     ```bash
     heroku open
     ```
@@ -127,10 +127,42 @@ heroku container:push web && heroku container:release web
 
 ## Troubleshooting
 
+### Bad Request (400) Error
+
+If you see a "Bad Request (400)" error, it's likely an `ALLOWED_HOSTS` issue. Django checks the Host header against `ALLOWED_HOSTS`.
+
+**Quick fix:**
+```bash
+# Option 1: Use wildcard to allow all Heroku subdomains (recommended)
+heroku config:set ALLOWED_HOSTS=*.herokuapp.com
+
+# Option 2: Set your exact domain
+heroku config:set ALLOWED_HOSTS=your-app-name-b02aeda79c87.herokuapp.com
+
+# Option 3: Get your exact domain automatically (Unix/Mac)
+heroku config:set ALLOWED_HOSTS=$(heroku apps:info | grep "Web URL" | awk '{print $3}' | sed 's|https://||' | sed 's|/||')
+
+# Option 3: Get your exact domain (Windows PowerShell)
+# First run: heroku apps:info
+# Then copy the Web URL and set it:
+heroku config:set ALLOWED_HOSTS=your-exact-domain.herokuapp.com
+```
+
+After setting `ALLOWED_HOSTS`, restart your app:
+```bash
+heroku restart
+```
+
 ### View logs:
 ```bash
 heroku logs --tail
 ```
+
+### Check what domain your app is using:
+```bash
+heroku apps:info
+```
+Look for the "Web URL" - that's your exact domain.
 
 ### Check container status:
 ```bash

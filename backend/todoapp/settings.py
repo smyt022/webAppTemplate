@@ -24,8 +24,9 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 # Get allowed hosts from environment or use default
 ALLOWED_HOSTS_ENV = config('ALLOWED_HOSTS', default='')
 if ALLOWED_HOSTS_ENV:
-    ALLOWED_HOSTS = ALLOWED_HOSTS_ENV.split(',')
+    ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_ENV.split(',')]
 else:
+    # Default to localhost for development
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
@@ -63,7 +64,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
-            BASE_DIR.parent / 'frontend' / 'build',
+            BASE_DIR / 'todoapp' / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -136,8 +137,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Serve React build files
+# Check for React build in different locations (Docker vs local)
 REACT_BUILD_DIR = BASE_DIR.parent / 'frontend' / 'build'
-if REACT_BUILD_DIR.exists():
+REACT_BUILD_DOCKER = BASE_DIR / 'react_build'
+
+if REACT_BUILD_DOCKER.exists():
+    # In Docker container, React build is in react_build directory
+    STATICFILES_DIRS = [REACT_BUILD_DOCKER]
+elif REACT_BUILD_DIR.exists():
+    # Local development, React build is in parent/frontend/build
     STATICFILES_DIRS = [REACT_BUILD_DIR]
 
 # Default primary key field type

@@ -14,12 +14,10 @@ urlpatterns = [
 ]
 
 # Serve React app for all non-API routes
-REACT_BUILD_DIR = Path(__file__).resolve().parent.parent.parent / 'frontend' / 'build'
-if REACT_BUILD_DIR.exists() or not settings.DEBUG:
-    # Catch-all pattern: serve React app for any route that doesn't match above
-    urlpatterns += [
-        re_path(r'^(?!api|admin).*', TemplateView.as_view(template_name='index.html')),
-    ]
+# Always add the catch-all route - template should be in todoapp/templates/index.html
+urlpatterns += [
+    re_path(r'^(?!api|admin|static).*', TemplateView.as_view(template_name='index.html')),
+]
 
 # Serve static files in development
 if settings.DEBUG:
