@@ -37,7 +37,13 @@
    ```
    (Replace `your-app-name` with your desired name, or omit for random name)
 
-7. **Add PostgreSQL database**:
+7. **Switch to container stack** (required for Docker):
+   ```bash
+   heroku stack:set container
+   ```
+   ⚠️ **Important:** This must be done before pushing containers!
+
+8. **Add PostgreSQL database**:
    ```bash
    heroku addons:create heroku-postgresql:essential-0
    ```

@@ -203,6 +203,9 @@ The Docker setup uses default development values. Update `docker-compose.yml` fo
    # Create Heroku app (if not already created)
    heroku create your-app-name
    
+   # Switch to container stack (required for Docker)
+   heroku stack:set container
+   
    # Add PostgreSQL database
    heroku addons:create heroku-postgresql:essential-0
    
