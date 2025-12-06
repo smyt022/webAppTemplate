@@ -1,0 +1,12 @@
+node_modules
+__pycache__
+*.pyc
+*.db
+*.sqlite3
+.env
+.git
+.gitignore
+README.md
+.idea
+.vscode
+

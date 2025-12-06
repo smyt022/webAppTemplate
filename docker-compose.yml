@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: todo-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - backend_db:/app/db
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-dev-key-change-in-production
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - todo-network
+
+  frontend:
+    build: ./frontend
+    container_name: todo-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+    networks:
+      - todo-network
+
+volumes:
+  backend_db:
+
+networks:
+  todo-network:
+    driver: bridge
+

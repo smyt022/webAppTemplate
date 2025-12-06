@@ -1,0 +1,13 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "Todo App - Full Stack Application",
+  "scripts": {
+    "heroku-postbuild": "cd frontend && npm install && npm run build && mkdir -p ../backend/todoapp/templates && cp build/index.html ../backend/todoapp/templates/"
+  },
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
+  }
+}
+

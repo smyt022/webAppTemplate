@@ -1,0 +1,18 @@
+#!/bin/bash
+# Post-compile script for Heroku
+
+echo "Building React frontend..."
+cd ../frontend
+npm install
+npm run build
+cd ../backend
+
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
+
+echo "Running migrations..."
+python manage.py migrate
+
+echo "Post-compile complete!"
+
+

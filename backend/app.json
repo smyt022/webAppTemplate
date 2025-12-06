@@ -1,0 +1,31 @@
+{
+  "name": "Todo App Backend",
+  "description": "Django REST API backend for Todo App",
+  "repository": "https://github.com/yourusername/webAppTemplate",
+  "keywords": ["django", "rest", "api", "jwt"],
+  "env": {
+    "SECRET_KEY": {
+      "description": "Django secret key",
+      "generator": "secret"
+    },
+    "DEBUG": {
+      "value": "False"
+    },
+    "ALLOWED_HOSTS": {
+      "description": "Comma-separated list of allowed hosts",
+      "value": ".herokuapp.com"
+    }
+  },
+  "addons": [
+    "heroku-postgresql:essential-0"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
+
