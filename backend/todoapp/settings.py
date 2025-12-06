@@ -141,12 +141,15 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 REACT_BUILD_DIR = BASE_DIR.parent / 'frontend' / 'build'
 REACT_BUILD_DOCKER = BASE_DIR / 'react_build'
 
+STATICFILES_DIRS = []
 if REACT_BUILD_DOCKER.exists():
     # In Docker container, React build is in react_build directory
-    STATICFILES_DIRS = [REACT_BUILD_DOCKER]
+    # Static files are already copied to staticfiles/static/ during Docker build
+    # But we still need to tell collectstatic about react_build for any other files
+    STATICFILES_DIRS.append(REACT_BUILD_DOCKER)
 elif REACT_BUILD_DIR.exists():
     # Local development, React build is in parent/frontend/build
-    STATICFILES_DIRS = [REACT_BUILD_DIR]
+    STATICFILES_DIRS.append(REACT_BUILD_DIR)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
