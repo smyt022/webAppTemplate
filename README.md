@@ -1,4 +1,4 @@
-# Todo App - SaaS Template
+# Todo App - Software Template
 
 ## Overview
 
