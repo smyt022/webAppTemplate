@@ -185,6 +185,8 @@ The Docker setup uses default development values. Update `docker-compose.yml` fo
 ## Heroku Deployment
 
 > **📖 For detailed deployment instructions, see [DEPLOY.md](DEPLOY.md)**
+> 
+> **✅ Using Docker on Heroku!** Your app runs in Docker containers on Heroku, just like locally. This ensures consistency between development and production environments.
 
 ### Quick Deployment Steps
 
@@ -193,30 +195,32 @@ The Docker setup uses default development values. Update `docker-compose.yml` fo
    - Create a [Heroku account](https://signup.heroku.com)
    - Login: `heroku login`
 
-2. **From project root** (not backend folder):
+2. **From project root**:
    ```bash
-   # Initialize git if needed
-   git init
-   git add .
-   git commit -m "Initial commit"
+   # Login to Heroku Container Registry
+   heroku container:login
    
-   # Create Heroku app
+   # Create Heroku app (if not already created)
    heroku create your-app-name
    
    # Add PostgreSQL database
    heroku addons:create heroku-postgresql:essential-0
    
-   # Set up buildpacks (Node.js first, then Python)
-   heroku buildpacks:add heroku/nodejs
-   heroku buildpacks:add heroku/python
-   
    # Set environment variables
+   # For Unix/Mac:
    heroku config:set SECRET_KEY=$(python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')
-   heroku config:set DEBUG=False
-   heroku config:set ALLOWED_HOSTS=$(heroku apps:info | grep "Web URL" | awk '{print $3}' | sed 's|https://||' | sed 's|/||')
+   # For Windows PowerShell:
+   # heroku config:set SECRET_KEY=$(python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
    
-   # Deploy
-   git push heroku main
+   heroku config:set DEBUG=False
+   # Replace 'your-app-name' with your actual Heroku app name, or use '*.herokuapp.com'
+   heroku config:set ALLOWED_HOSTS=your-app-name.herokuapp.com
+   
+   # Build and push Docker image
+   heroku container:push web
+   
+   # Release the container
+   heroku container:release web
    ```
 
 3. **Open your app:**
@@ -226,11 +230,12 @@ The Docker setup uses default development values. Update `docker-compose.yml` fo
 
 ### Important Notes
 
-- ✅ React frontend builds automatically during deployment
+- ✅ Uses Docker containers (same as local setup!)
+- ✅ React frontend builds during Docker build
 - ✅ Frontend and backend served from same domain
 - ✅ API endpoints at `/api/`
 - ✅ Admin panel at `/admin/`
-- ✅ Database migrations run automatically
+- ✅ Database migrations run automatically on release
 
 ### Common Commands
 
@@ -244,8 +249,8 @@ heroku run python manage.py migrate
 # Create superuser
 heroku run python manage.py createsuperuser
 
-# Update deployment
-git push heroku main
+# Update deployment (rebuild and release)
+heroku container:push web && heroku container:release web
 ```
 
 ## CI/CD Considerations
