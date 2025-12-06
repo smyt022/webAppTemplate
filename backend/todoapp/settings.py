@@ -134,7 +134,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise configuration for serving static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Using CompressedStaticFilesStorage instead of Manifest to avoid manifest issues
+# The manifest version requires all files to be collected with hashed names
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Serve React build files
 # Check for React build in different locations (Docker vs local)
@@ -144,8 +146,8 @@ REACT_BUILD_DOCKER = BASE_DIR / 'react_build'
 STATICFILES_DIRS = []
 if REACT_BUILD_DOCKER.exists():
     # In Docker container, React build is in react_build directory
-    # Static files are already copied to staticfiles/static/ during Docker build
-    # But we still need to tell collectstatic about react_build for any other files
+    # React's static files are in react_build/static/js/ and react_build/static/css/
+    # We need to point to react_build so collectstatic can find the static/ subdirectory
     STATICFILES_DIRS.append(REACT_BUILD_DOCKER)
 elif REACT_BUILD_DIR.exists():
     # Local development, React build is in parent/frontend/build
