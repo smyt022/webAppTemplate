@@ -80,6 +80,15 @@
     heroku open
     ```
 
+13. **Verify migrations ran** (important!):
+    ```bash
+    heroku run python manage.py showmigrations
+    ```
+    All migrations should show `[X]` (applied). If you see `[ ]` (unapplied), run:
+    ```bash
+    heroku run python manage.py migrate
+    ```
+
 ## How It Works
 
 > **Docker on Heroku** - Your app runs in the same Docker container on Heroku as it does locally! This ensures:
@@ -100,7 +109,9 @@
 
 3. **Release Phase** (from `heroku.yml`):
    - Runs database migrations automatically
-   - Sets up the database
+   - Collects static files
+   - ⚠️ **Important:** If migrations don't run, you'll get 500 errors on API endpoints
+   - Always verify with: `heroku run python manage.py showmigrations`
 
 4. **Web Dyno**:
    - Runs your Docker container
@@ -126,6 +137,31 @@ heroku container:push web && heroku container:release web
 ```
 
 ## Troubleshooting
+
+### 500 Error on API Endpoints (Register/Login)
+
+**Most common cause:** Database migrations haven't run!
+
+**Check:**
+```bash
+heroku run python manage.py showmigrations
+```
+
+**If you see `[ ]` (unapplied migrations):**
+```bash
+heroku run python manage.py migrate
+```
+
+**Why this happens:**
+- Release phase migrations might fail silently
+- Database was reset
+- First deployment after database creation
+
+**Prevention:** Always verify migrations after deployment:
+```bash
+heroku container:release web
+heroku run python manage.py showmigrations
+```
 
 ### Bad Request (400) Error
 

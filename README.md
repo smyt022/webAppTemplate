@@ -224,6 +224,10 @@ The Docker setup uses default development values. Update `docker-compose.yml` fo
    
    # Release the container
    heroku container:release web
+   
+   # Verify migrations ran (important!)
+   heroku run python manage.py showmigrations
+   # If you see [ ] (unapplied), run: heroku run python manage.py migrate
    ```
 
 3. **Open your app:**

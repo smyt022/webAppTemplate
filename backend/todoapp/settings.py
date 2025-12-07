@@ -134,9 +134,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise configuration for serving static files
-# Using CompressedStaticFilesStorage instead of Manifest to avoid manifest issues
-# The manifest version requires all files to be collected with hashed names
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Using StaticFilesStorage (simplest) - serves files as-is without compression/manifest
+# This works better when we manually copy React files
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 # Serve React build files
 # Check for React build in different locations (Docker vs local)
